@@ -1,0 +1,451 @@
+---
+title: "Impacto del entrenamiento de fuerza en personas mayores"
+author: "Maite Berenice Aliendro"
+format:
+  html:
+    toc: true  
+    number-sections: true  
+    theme: cosmo  
+    code-fold: true  
+    code-tools: true  
+    df-print: paged  
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+library(tidyverse)
+library(scales) 
+library(gt) #libreria para hacer tablas
+#Cargo los datasets
+datos <- read.csv("datos_entrenamiento.csv")
+```
+
+# Introducción
+
+Este proyecto explora cómo el entrenamiento de fuerza impacta en la calidad de vida de personas mayores. Los datos fueron recolectados a partir de mi propia experiencia como preparadora física en mi gimnasio, trabajando con personas de entre 60 y 79 años durante el período 2019–2025.
+
+La muestra incluye 20 personas que se acercaron al gimnasio sin experiencia previa en actividad física, muchas de ellas por recomendación médica. Presentaban diversas condiciones como ACV, diabetes, hipertensión, colesterol elevado, sobrepeso, y dolores articulares (especialmente en cadera y cintura).
+
+Se evaluaron mejoras físicas y funcionales luego de tres meses de entrenamiento de fuerza. Estas personas asistían al gimnasio por sus propios medios, una o dos veces por semana, con sesiones de aproximadamente 45 minutos.
+
+Las variables consideradas incluyeron la capacidad de sentarse y pararse sin asistencia, realizar flexiones contra la pared y ejercicios de tracción (remo), así como la facilidad para subir escaleras. También se relevó información subjetiva sobre percepción del dolor, equilibrio y estado emocional. La mayoría de estas variables fueron registradas en una escala de 1 a 5, donde 1 representa “muy poco” y 5 “mucho”.
+
+# Metodología
+
+Con la mayoría de las personas de esta muestra se trabajó de forma similar durante el primer mes, y luego el entrenamiento se individualizó según el progreso de cada uno.
+
+Todos entrenaban dos veces por semana durante 45 minutos. La sesión comenzaba con una entrada en calor basada en ejercicios de movilidad (brazos, cintura, piernas) y un ejercicio de zona media con enfoque en anti-rotación, generalmente el *Pallof Press* con bandas elásticas. A continuación, se realizaba un circuito de fuerza compuesto por ejercicios como:
+
+-   Sentarse y pararse desde un cajón
+-   Flexiones de brazos contra la pared
+-   Levantar peso por encima de la cabeza
+-   Remo con bandas elásticas
+-   Subidas frontales al banco
+-   Ejercicios de equilibrio en un pie (con o sin apoyo, según el caso)
+
+La cantidad de repeticiones variaba entre 6 y 8, en un total de 3 a 4 vueltas, ajustándose al contexto y capacidades de cada persona.
+
+A medida que el/la participante progresaba, se aumentaba la dificultad mediante estrategias como usar un cajón más bajo o más alto, aumentar el peso, utilizar bandas de mayor resistencia, sumar repeticiones o agregar más rondas.
+
+Para conservar la confidencialidad de las personas involucradas, se asignó a cada una un identificador numérico (ID) del 01 al 20, sin registrar nombres propios.
+
+El primer día, a todos se les consultó sobre sus condiciones físicas, patologías previas, experiencias con el entrenamiento, y se les pidió que calificaran del 1 al 5 su estado de ánimo, nivel de autonomía y si eran capaces o no de subir escaleras.
+
+Durante el entrenamiento, se utilizó la escala de Borg modificada (de 1 a 10) para registrar la percepción del esfuerzo, siendo 1 un esfuerzo muy leve y 10 un esfuerzo máximo. Esta información se usó para monitorear la carga interna y ajustar la progresión del entrenamiento.
+
+# Descripción de variables
+
+En este proyecto se evaluaron y compararon variables tanto de tipo físico como psicológico, con el objetivo de observar los cambios autopercibidos por las personas mayores luego de 12 semanas de entrenamiento de fuerza.
+
+Las evaluaciones se realizaron en dos momentos:
+
+-   Inicial (antes de comenzar el entrenamiento)
+
+-   Final (al completar aproximadamente tres meses de entrenamiento)
+
+Todas las variables fueron medidas a través de autoevaluaciones guiadas, utilizando una escala de 1 a 5, donde:
+
+-   1 representa un nivel muy bajo (por ejemplo: no puede hacerlo, mucho dolor, muy mal ánimo)
+
+-   5 representa un nivel muy alto (por ejemplo: lo hace sin dificultad, sin dolor, excelente ánimo)
+
+## Variables físicas
+
+Las siguientes variables apuntan a medir funciones físicas relevantes para la vida diaria de personas mayores:
+
+-   Capacidad para levantarse de una silla (inicio / final)
+
+-   Capacidad para realizar flexiones de brazos contra la pared (inicio / final)
+
+-   Capacidad para subir una escalera (inicio / final)
+
+-   Capacidad de tracción (remo u otro movimiento similar) (inicio / final)
+
+-   Capacidad de equilibrio (inicio / final)
+
+-   Grado de autonomía percibida para realizar tareas cotidianas (inicio / final)
+
+## Variables psicológicas
+
+También se incluyeron variables subjetivas relacionadas al bienestar emocional y la percepción general del proceso:
+
+-   Percepción del dolor (inicio / final)
+
+-   Estado de ánimo general (inicio / final)
+
+-   Mejora global (evaluación subjetiva del cambio total percibido, del 1 al 5)
+
+# Resumen de la muestra
+
+Como se observa en la tabla, la muestra está compuesta por 20 personas de entre 60 y 79 años, con una edad promedio de 67 años. La mayoría son mujeres (70%) y presentan diagnósticos frecuentes como sobrepeso y dolor articular. La mayoría (13 personas) no tenían actividad física previa, y la intensidad inicial del entrenamiento fue mayormente baja o muy baja, acorde a su condición física inicial.
+
+Cabe destacar que dentro de la muestra se incluye un caso particular: una señora que sufrió un accidente cerebrovascular (ACV) con reducción importante de la capacidad motora del lado derecho. Este caso será analizado en detalle más adelante debido a su relevancia clínica y al desafío que representó en el contexto del entrenamiento.
+
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+
+# Resumen de la muestra
+
+resumen <- tibble::tibble( `Tamaño de la muestra` = nrow(datos), `Edad promedio` = round(mean(datos$edad, na.rm = TRUE), 1),
+  `Rango etario` = paste(min(datos$edad, na.rm = TRUE), "-", max(datos$edad, na.rm = TRUE)),
+  `Distribución por sexo` = paste0(
+    sum(datos$sexo == "F", na.rm = TRUE), " mujeres, ", sum(datos$sexo == "M", na.rm = TRUE), " varones"
+  ),
+  `Diagnósticos frecuentes` = "Sobrepeso, dolor articular",
+  `Actividad física previa` = paste0(
+    "Sí: ", sum(datos$actividad_fisica == "si", na.rm = TRUE), ", ", "No: ", sum(datos$actividad_fisica == "no", na.rm = TRUE)
+  ))
+# Transponer, convertir a tabla con nombres correctos
+
+resumen_t <- as.data.frame(t(resumen))
+resumen_t <- tibble::rownames_to_column(resumen_t, "Variable")
+colnames(resumen_t)[2] <- "Valor"  
+
+# Generar tabla gt
+
+resumen_t %>%
+  gt() %>%
+  tab_header(
+    title = "Resumen de la muestra",
+    subtitle = "Entrenamiento de fuerza en personas mayores"
+  ) %>%
+  cols_label(
+    Variable = "Variable",
+    Valor = "Valor"
+  ) %>%
+  tab_options(
+    table.font.size = px(14),
+    column_labels.font.weight = "bold",
+    table.align = "left"
+  )
+```
+
+
+# Evaluación de resultados y progresos generales
+
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+# Calcular los promedios iniciales y finales 
+tabla_medias <- tibble::tibble(
+  Variable = c(
+    "Levantarse de la silla",
+    "Flexiones en pared",
+    "Equilibrio",
+    "Autonomía",
+    "Ánimo",
+    "Dolor"
+  ),
+  Inicio = c(
+    mean(datos$levantarse_silla_inicio, na.rm = TRUE),
+    mean(datos$flexiones_pared_inicio, na.rm = TRUE),
+    mean(datos$equilibrio_inicio, na.rm = TRUE),
+    mean(datos$autonomia_inicio, na.rm = TRUE),
+    mean(datos$animo_inicio, na.rm = TRUE),
+    mean(datos$percepcion_dolor_inicio, na.rm = TRUE)
+  ),
+  Final = c(
+    mean(datos$levantarse_silla_final, na.rm = TRUE),
+    mean(datos$flexiones_pared_final, na.rm = TRUE),
+    mean(datos$equilibrio_final, na.rm = TRUE),
+    mean(datos$autonomia_final, na.rm = TRUE),
+    mean(datos$animo_final, na.rm = TRUE),
+    mean(datos$percepcion_dolor_final, na.rm = TRUE)
+  )
+) %>%
+  mutate(
+    Mejora = ifelse(Variable == "Dolor",
+                    Inicio - Final,     # en dolor, mejora es disminución
+                    Final - Inicio)     # en el resto, mejora es aumento
+  )
+
+# Mostrar la tabla con gt
+tabla_medias %>%
+  gt() %>%
+  tab_header(
+    title = "Promedios antes y después del entrenamiento",
+    subtitle = "Comparación por variable"
+  ) %>%
+  fmt_number(columns = c(Inicio, Final, Mejora), decimals = 2) %>%
+  cols_label(
+    Variable = "Variable",
+    Inicio = "Inicio",
+    Final = "Final",
+    Mejora = "Mejora"
+  ) %>%
+  tab_options(
+    table.font.size = px(14),
+    column_labels.font.weight = "bold",
+    table.align = "left"
+  )
+```
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Elegimos solo algunas variables clave para el gráfico
+
+variables_para_grafico <- datos %>%
+  summarise(
+    `Levantarse` = mean(levantarse_silla_final, na.rm = TRUE) - mean(levantarse_silla_inicio, na.rm = TRUE),
+    `Flexiones` = mean(flexiones_pared_final, na.rm = TRUE) - mean(flexiones_pared_inicio, na.rm = TRUE),
+    `Equilibrio` = mean(equilibrio_final, na.rm = TRUE) - mean(equilibrio_inicio, na.rm = TRUE),
+    `Autonomía` = mean(autonomia_final, na.rm = TRUE) - mean(autonomia_inicio, na.rm = TRUE),
+    `Ánimo` = mean(animo_final, na.rm = TRUE) - mean(animo_inicio, na.rm = TRUE),
+    `Dolor (reducción)` = mean(percepcion_dolor_inicio, na.rm = TRUE) - mean(percepcion_dolor_final, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Mejora") %>%
+  mutate(
+    color = ifelse(Variable == "Dolor (reducción)", "dolor", "otros")
+  )
+
+ggplot(variables_para_grafico, aes(x = reorder(Variable, Mejora), y = Mejora, fill = color)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = round(Mejora, 2)), hjust = ifelse(variables_para_grafico$Mejora < 0, 1.1, -0.1), color = "black", size = 4) +
+  coord_flip() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray30") +
+  scale_fill_manual(values = c("dolor" = "#F8766D", "otros" = "#00BFC4")) +
+  labs(
+    title = "Mejora promedio por variable",
+    x = "",
+    y = "Cambio promedio (puntaje final - puntaje inicial)"
+  ) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12),
+        plot.title = element_text(size = 14, face = "bold"))
+
+
+```
+
+Al analizar la muestra completa de 20 personas mayores, se observa una mejora sostenida en las variables evaluadas tras 12 semanas de entrenamiento de fuerza. En general, la mayoría mostró avances en fuerza funcional, equilibrio, autonomía y estado emocional.
+
+Por ejemplo, la capacidad para levantarse de la silla y realizar flexiones contra la pared mejoró notablemente, evidenciando que el entrenamiento facilitó actividades básicas de la vida diaria. El equilibrio también mostró progresos importantes, lo que contribuye a reducir el riesgo de caídas y aumentar la confianza al moverse.
+
+En cuanto al aspecto emocional, el ánimo subió de manera significativa, mientras que la percepción del dolor disminuyó, lo que refleja un impacto positivo en la calidad de vida de los participantes. Algunos comentaron sentirse con más energía y mayor seguridad para realizar sus actividades cotidianas.
+
+Además, los ejercicios y la progresión fueron adaptados al nivel y condición de cada persona, lo que permitió una evolución adecuada y constante, incluso en quienes comenzaron con niveles bajos de fuerza y movilidad.
+
+
+## Relación entre mejora en autonomía y percepción del ánimo
+
+Se observa una correlación positiva moderada entre la mejora en autonomía y la mejora en ánimo en la muestra estudiada (r = 0.4239). Esto indica que quienes aumentaron su capacidad para realizar actividades cotidianas sin ayuda tendieron también a reportar un mejor estado emocional.
+
+Este hallazgo refuerza la idea de que los beneficios físicos del entrenamiento de fuerza no solo se traducen en funcionalidad, sino que impactan favorablemente en el bienestar psicológico de las personas mayores.
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Crear variables de mejora
+datos <- datos %>%
+  mutate(
+    mejora_autonomia = autonomia_final - autonomia_inicio,
+    mejora_animo = animo_final - animo_inicio
+  )
+
+# Calcular correlación
+correlacion <- cor(datos$mejora_autonomia, datos$mejora_animo, use = "complete.obs")
+
+# Gráfico de dispersión con línea de regresión
+ggplot(datos, aes(x = mejora_autonomia, y = mejora_animo)) +
+  geom_point(color = "#00BFC4", size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", se = TRUE, color = "#F8766D") +
+  labs(
+    title = "Relación entre mejora en autonomía y mejora en ánimo",
+    x = "Mejora en autonomía (puntaje final - inicial)",
+    y = "Mejora en ánimo (puntaje final - inicial)",
+    caption = paste("Correlación de Pearson =", round(correlacion, 2))
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12)
+  )
+```
+
+
+## Relación entre mejora física y percepción del dolor
+
+Se observa una correlación positiva entre la mejora promedio en capacidades físicas (levantarse, flexiones, equilibrio y autonomía) y la reducción en la percepción del dolor. Esto indica que las personas que aumentaron más su fuerza y movilidad también reportaron una disminución mayor en su malestar, lo que refuerza el efecto terapéutico del entrenamiento de fuerza en la reducción del dolor articular y mejora funcional en personas mayores.
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+# Calcular mejora física promedio por persona
+datos <- datos %>%
+  mutate(
+    mejora_levantarse = levantarse_silla_final - levantarse_silla_inicio,
+    mejora_flexiones = flexiones_pared_final - flexiones_pared_inicio,
+    mejora_equilibrio = equilibrio_final - equilibrio_inicio,
+    mejora_autonomia = autonomia_final - autonomia_inicio,
+    mejora_dolor = percepcion_dolor_inicio - percepcion_dolor_final,
+    mejora_fisica_promedio = (mejora_levantarse + mejora_flexiones + mejora_equilibrio + mejora_autonomia) / 4
+  )
+
+# Gráfico correlación mejora física promedio vs reducción de dolor
+ggplot(datos, aes(x = mejora_fisica_promedio, y = mejora_dolor)) +
+  geom_point(color = "#00BFC4", size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "#F8766D") +
+  labs(
+    title = "Relación entre mejora física promedio y reducción de percepción del dolor",
+    x = "Mejora física promedio (puntos)",
+    y = "Reducción percepción del dolor (puntos)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10
+                              , face = "bold"),
+    axis.text = element_text(size = 12)
+  )
+
+```
+
+## Relación entre edad y mejora física
+
+Al analizar la relación entre la edad y la mejora promedio en capacidades físicas, se observa una ligera tendencia decreciente, aunque no muy marcada. Esto sugiere que, aunque las personas mayores más avanzadas tienden a mejorar un poco menos en fuerza y movilidad, el entrenamiento de fuerza sigue siendo efectivo a lo largo de todo el rango etario estudiado (60 a 79 años).
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(datos, aes(x = edad, y = mejora_fisica_promedio)) +
+  geom_point(color = "#619CFF", size = 3) +
+  geom_smooth(method = "loess", se = TRUE, color = "#F8766D") +
+  labs(
+    title = "Relación entre edad y mejora física promedio",
+    x = "Edad (años)",
+    y = "Mejora física promedio (puntos)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12)
+  )
+```
+
+## Caso particular: participante con secuelas motoras post ACV
+
+Dentro de la muestra, se destaca el caso de una señora de 75 años que sufrió un accidente cerebrovascular (ACV) y perdió la capacidad motora del lado derecho del cuerpo. A pesar de esta dificultad, logró avances importantes durante el entrenamiento.
+
+Aunque sus progresos fueron más lentos y de menor magnitud comparados con el resto, destacó especialmente la mejora en su autonomía, ya que pudo realizar actividades que antes le resultaban imposibles, como ir sola al baño, lo que le generó mucha alegría y motivación.
+
+Este caso resalta la importancia de adaptar el entrenamiento de fuerza a las necesidades individuales y demuestra que, con el acompañamiento adecuado, incluso personas con condiciones motoras complejas pueden beneficiarse y recuperar parte de su funcionalidad.
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Datos señora con ACV
+datos_senora <- tibble::tibble(
+  Variable = c("Levantarse", "Autonomía", "Ánimo", "Dolor"),
+  Inicio = c(1, 2, 2, 5),
+  Final = c(3, 4, 5, 1)
+) %>%
+  pivot_longer(cols = c(Inicio, Final), names_to = "Momento", values_to = "Valor")
+
+ggplot(datos_senora, aes(x = Variable, y = Valor, fill = Momento)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.6) +
+  geom_text(aes(label = Valor), position = position_dodge(width = 0.6), vjust = -0.3, size = 4) +
+  scale_fill_manual(values = c("Inicio" = "gray60", "Final" = "skyblue3")) +
+  labs(
+    title = "Progreso individual",
+    y = "Puntaje en escala 1 a 5",
+    x = "",
+    fill = "Momento"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12)
+  )
+
+```
+
+## Percepción subjetiva de la mejora y testimonios
+
+Al finalizar las 12 semanas de entrenamiento de fuerza, la mayoría de los participantes reportó una mejora global significativa en su calidad de vida y bienestar físico. Como se observa en la tabla y gráfico, la puntuación más frecuente fue 4, lo que indica que los usuarios percibieron un avance considerable.
+
+Esta percepción positiva coincide con los progresos objetivos en fuerza, equilibrio y autonomía observados durante el proyecto.
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+# Ejemplo: extraer la variable mejora_global del dataset
+# (Reemplazar "mejora_global" por el nombre correcto que tengas)
+
+datos %>%
+  count(mejora_global) %>%
+  mutate(porcentaje = n / sum(n) * 100) %>%
+  gt() %>%
+  tab_header(
+    title = "Distribución de la mejora global subjetiva",
+    subtitle = "Evaluación de los participantes al finalizar el entrenamiento"
+  ) %>%
+  fmt_number(
+    columns = vars(porcentaje),
+    decimals = 1,
+    suffixing = TRUE
+  ) %>%
+  cols_label(
+    mejora_global = "Puntaje",
+    n = "Cantidad",
+    porcentaje = "Porcentaje (%)"
+  ) %>%
+  tab_options(
+    table.font.size = px(14),
+    column_labels.font.weight = "bold",
+    table.align = "left"
+  )
+```
+
+```{r, fig.align="left", fig.width=6, fig.height=4, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(datos, aes(x = factor(mejora_global))) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Mejora global subjetiva al finalizar el entrenamiento",
+    x = "Puntaje (1 = poco, 5 = mucho)",
+    y = "Cantidad de participantes"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 14)
+  )
+```
+
+### Testimonios de participantes
+
+Además de las mediciones cuantitativas, es fundamental considerar la percepción que tienen los participantes sobre su propio progreso. La valoración subjetiva de la mejora global complementa y enriquece los datos objetivos, aportando un enfoque más humano y cercano a la experiencia de cada persona durante el proceso de entrenamiento.
+
+Los testimonios recopilados reflejan cómo estas mejoras impactaron en su vida diaria, en su bienestar emocional y en su motivación para continuar con la actividad física. A continuación, se presentan algunas expresiones representativas que ilustran el valor real del entrenamiento de fuerza en personas mayores.
+
+> **Caso 1 - Mujer con secuelas motoras post ACV**  
+> “Había perdido la habilidad motora del lado derecho del cuerpo. Se sintió muy contenta y motivada cuando pudo ir sola al baño, algo que antes no podía hacer.”
+
+> **Caso 2 - Mujer sin dolor articular**  
+> “Mejoró notablemente mi postura y coordinación. Ahora me siento más segura al caminar y realizar actividades diarias.”
+
+> **Caso 3 - Mujer con dolor articular**  
+> “Comentó sentirse con más energía y menos dolor. El entrenamiento le ayudó a recuperar confianza para moverse sin miedo.”
+
+> **Caso 4 - Hombre con sobrepeso y diabetes**  
+> “Notó mejoras en el equilibrio y la fuerza, especialmente al vestirse y subir escaleras sin ayuda.”
+
+# Conclusión
+
+Este estudio confirma que el entrenamiento de fuerza, cuidadosamente adaptado a las capacidades y necesidades individuales, puede transformar la vida de las personas mayores. No solo se evidenciaron mejoras objetivas en fuerza funcional, equilibrio, autonomía y estado emocional, sino que también se logró una disminución significativa en la percepción del dolor, un factor clave para su bienestar diario.
+
+El impacto positivo se manifestó incluso en casos complejos, como la señora con ACV, demostrando que con el enfoque adecuado y la progresión controlada, es posible recuperar funcionalidad y mejorar la calidad de vida, incluso ante limitaciones severas.
+
+Los testimonios y la valoración subjetiva de los participantes reflejan un aumento en la confianza, la motivación y la sensación de independencia, aspectos fundamentales para mantener la adherencia al ejercicio y promover un envejecimiento activo y saludable.
+
+En definitiva, este proyecto reafirma que el entrenamiento de fuerza no es solo un medio para mejorar la condición física, sino una poderosa herramienta para potenciar la autonomía, reducir el malestar y mejorar el bienestar integral en la población adulta mayor.
+
